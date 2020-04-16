@@ -23,7 +23,24 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("testservice")
 public class Service {
-     @GET
+    public Connection con = null;
+    
+    public Connection dbConnection(){
+        if(con == null){
+         try{
+            String id = "root";
+            String pass = "12345678";
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/apiplatfrom?useSSL=false", id, pass);
+        }catch(Exception e){
+            System.out.println("Failed Connection");
+        }   
+        }
+        return this.con;
+    }
+    
+    
+    @GET
     @Path("/getregistered")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<UserModel> listRegisteredUsers() throws ClassNotFoundException, SQLException {
@@ -49,23 +66,20 @@ public class Service {
     @GET
     @Path("/register/{parameter1}/{parameter2}/{parameter3}/{parameter4}")
     
-    public boolean register (@PathParam("parameter1") String email, @PathParam("parameter2") String username, @PathParam("parameter3") String password, @PathParam("parameter4")String usertype) throws ClassNotFoundException, SQLException{
+     @Produces(MediaType.APPLICATION_JSON)
+    public String register (String email, String username, String password, String usertype) throws ClassNotFoundException, SQLException{
       
-        String id = "software";
-        String pass = "12345";
-        Connection con = null;
-        Class.forName("org.apache.derby.jdbc.ClientDriver");
-        con = DriverManager.getConnection("jdbc:derby://localhost:1527/project",id,pass);
+        dbConnection();
          if (usertype.equals("buyer") || usertype.equals("owner") || usertype.equals("admin"))
          {
              String query = "Insert into Users(email, userName, password, userType) Values ('"+email+"','"+username+"','"+password+"','"+usertype+"')";
              con.prepareStatement(query).execute();
         }
         else{
-            return false;
+            return "Invalid Data";
         }
         
-        return true;  
+        return "Your Registeration was Successful";  
     }
     @GET
     @Path("/login/{parameter1}/{parameter2}")
