@@ -6,7 +6,9 @@
 package com.test;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,15 +31,16 @@ public class UserHandler {
         return registeredUsers;
 
 }
-    @GET
-    @Path("/register/{parameter1}/{parameter2}/{parameter3}/{parameter4}")
-    public boolean register (@PathParam("parameter1") String email, @PathParam("parameter2") String username, @PathParam("parameter3") String password, @PathParam("parameter4")String usertype) throws ClassNotFoundException, SQLException{
+   @POST
+    @Path("/register")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String register (UserModel user) throws ClassNotFoundException, SQLException{
       
         Service db = new Service();
-        boolean message = db.register(email, username, password, usertype);
-        return message;
+        return db.register(user.getEmail(), user.getUserName(), user.getPassword(), user.getUserType());
     }
-   
+    
     @GET
     @Path("/login/{parameter1}/{parameter2}")
     
