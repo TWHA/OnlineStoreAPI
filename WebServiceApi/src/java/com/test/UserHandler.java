@@ -20,15 +20,16 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("testcontroller")
 public class UserHandler {
-    @GET
+     
+    @POST
     @Path("/getregistered")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<UserModel> listRegisteredUsers() throws ClassNotFoundException, SQLException {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ArrayList<UserModel> listRegisteredUsers(UserModel user) throws ClassNotFoundException, SQLException {
         
         Service db = new Service();
         ArrayList<UserModel> registeredUsers = new ArrayList();
-        registeredUsers = db.listRegisteredUsers();
-        return registeredUsers;
+        return db.listRegisteredUsers(user.getEmail());
 
 }
    @POST
