@@ -40,26 +40,42 @@ public class Service {
     }
     
     
-    @GET
-    @Path("/getregistered")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<UserModel> listRegisteredUsers() throws ClassNotFoundException, SQLException {
+     public boolean authorization(String email) throws SQLException, ClassNotFoundException{
         
-        ArrayList<UserModel> registered = new ArrayList();
-        Connection con=null;
-        String userName = "software";
-        String password = "12345";
-        String query = "select * from Users";
-        Class.forName("org.apache.derby.jdbc.ClientDriver");
-        con = DriverManager.getConnection("jdbc:derby://localhost:1527/project",userName,password);
+        dbConnection();
+        String dbusertype = "";
+        String query = "select userType from Users where email = '"+email+"'";
         Statement st = con.createStatement();
         ResultSet res = st.executeQuery(query);
+        while(res.next()){
+        dbusertype = res.getString("userType");
+        if (dbusertype.equals("admin")){   
+            return true;
+        }
+        else{
+            return false;
+        }     
+        }       
+        return false;
+    };
+    
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<UserModel> listRegisteredUsers(String email) throws ClassNotFoundException, SQLException {
+        
+        dbConnection();
+        ArrayList<UserModel> registered = new ArrayList();
+        String query = "select * from Users";
+        Statement st = con.createStatement();
+        ResultSet res = st.executeQuery(query);
+        if (authorization(email)){
         while(res.next()){
             UserModel user = new UserModel();
             user.setEmail(res.getString("email"));
             user.setUserName(res.getString("userName"));
             user.setUserType(res.getString("userType"));
             registered.add(user);
+        }        
+        return registered;
         }
         return registered;
 }
