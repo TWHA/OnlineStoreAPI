@@ -39,6 +39,23 @@ public class Service {
         return this.con;
     }
     
+    public boolean authentication(String email) throws SQLException{
+        
+        dbConnection();
+        String dbLogged = "";
+        String query = "select logged from users where email = '"+email+"'";
+        Statement st = con.createStatement();
+        ResultSet res = st.executeQuery(query);
+        while(res.next()){
+        dbLogged = res.getString("logged");
+        }
+          if (dbLogged != null && !dbLogged.isEmpty() && dbLogged.equals("1")){   
+            return true;
+        }
+          else{
+            return false;
+        }
+    }; 
     
      public boolean authorization(String email) throws SQLException, ClassNotFoundException{
         
