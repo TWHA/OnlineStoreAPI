@@ -11,9 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -57,23 +55,27 @@ public class Service {
         }
     }; 
     
-     public boolean authorization(String email) throws SQLException, ClassNotFoundException{
+    public boolean authorization(String email) throws SQLException, ClassNotFoundException{
         
         dbConnection();
+        if (authentication(email)){
         String dbusertype = "";
         String query = "select userType from Users where email = '"+email+"'";
         Statement st = con.createStatement();
         ResultSet res = st.executeQuery(query);
         while(res.next()){
-        dbusertype = res.getString("userType");
-        if (dbusertype.equals("admin")){   
+        dbusertype = res.getString("userType");     
+        }
+          if (dbusertype.equals("admin")){   
             return true;
         }
         else{
             return false;
-        }     
-        }       
+        }
+        }
+        else{
         return false;
+        }
     };
     
     @Produces(MediaType.APPLICATION_JSON)
@@ -96,10 +98,8 @@ public class Service {
         }
         return registered;
 }
-    @GET
-    @Path("/register/{parameter1}/{parameter2}/{parameter3}/{parameter4}")
-    
-     @Produces(MediaType.APPLICATION_JSON)
+   
+    @Produces(MediaType.APPLICATION_JSON)
     public String register (String email, String username, String password, String usertype) throws ClassNotFoundException, SQLException{
       
         dbConnection();
@@ -114,9 +114,8 @@ public class Service {
         
         return "Your Registeration was Successful";  
     }
-    @GET
-    @Path("/login/{parameter1}/{parameter2}")
-    
+
+    @Produces(MediaType.APPLICATION_JSON)
     public String login(String email, String password) throws ClassNotFoundException, SQLException{
        
         dbConnection();
@@ -140,4 +139,6 @@ public class Service {
             return "Invalid Data, Please Try Again";
         }
     }
+
+
 }
