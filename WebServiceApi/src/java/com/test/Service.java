@@ -105,15 +105,19 @@ public class Service {
         dbConnection();
         String dbEmail = "";
         String dbPassword = "";
-        Statement st = con.createStatement();
+        Statement st1 = con.createStatement();
         String query = "select * from users where email = '" + email + "'and  password = '" + password+ "'";
-        ResultSet res = st.executeQuery(query);
-        while(res.next()){
-            dbEmail = (res.getString("email"));
-            dbPassword = (res.getString("password"));
+        ResultSet res1 = st1.executeQuery(query);
+        while(res1.next()){
+            dbEmail = (res1.getString("email"));
+            dbPassword = (res1.getString("password"));
         }
         if (email.equals(dbEmail) && password.equals(dbPassword)){
-            return "Your Login was Seccessful, Welcome!";
+            String loggedIn = "1";
+            String query2 = "update users set logged = '"+loggedIn+"' where email = '"+dbEmail+"'";
+            Statement st2 = con.createStatement();
+            st2.executeUpdate(query2);
+            return "Your Login was Successful, Welcome!";
         }
         else{
             return "Invalid Data, Please Try Again";
